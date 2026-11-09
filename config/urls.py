@@ -19,11 +19,14 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 from rest_framework.authtoken import views
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from despesas.views import CategoriaViewSet, DespesaViewSet
 from users.api.views import UserProfileExampleViewSet
 
 router = SimpleRouter()
 
 router.register("users", UserProfileExampleViewSet, basename="users")
+router.register("api/categorias", CategoriaViewSet, basename="categoria")
+router.register("api/despesas", DespesaViewSet, basename="despesa")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
