@@ -1,3 +1,4 @@
+from django.db import IntegrityError, transaction
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -58,6 +59,17 @@ class ControleDespesasTests(APITestCase):
                 self.assertEqual(resposta.status_code, status.HTTP_400_BAD_REQUEST)
                 self.assertIn("valor", resposta.data)
         self.assertEqual(Despesa.objects.count(), 1)
+
+    def test_banco_rejeita_gravacao_direta_com_valor_invalido(self):
+        for valor in ("0.00", "-1.00"):
+            with self.subTest(valor=valor):
+                with self.assertRaises(IntegrityError), transaction.atomic():
+                    Despesa.objects.create(
+                        descricao="Inválida",
+                        valor=valor,
+                        data="2026-11-09",
+                        categoria=self.categoria,
+                    )
 
     def test_preserva_categoria_com_despesa_vinculada(self):
         url = reverse("categoria-detail", args=[self.categoria.pk])

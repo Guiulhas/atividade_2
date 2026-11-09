@@ -27,5 +27,13 @@ class Despesa(models.Model):
         related_name="despesas",
     )
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(valor__gte=Decimal("0.01")),
+                name="despesa_valor_minimo",
+            ),
+        ]
+
     def __str__(self):
         return self.descricao
